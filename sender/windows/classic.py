@@ -93,7 +93,9 @@ class ClassicSession:
 
   def activate(self):
     if self.instance == "default":
-      self.activate_last_active(r"^SAS$")
+      # KS: I made this change so that submit will also work if a window in SAS is maximized
+      # self.activate_last_active(r"^SAS$")
+      self.activate_last_active(r"^SAS($| -.*)")
     else:
       self.activate_via_pid()
 
@@ -103,7 +105,10 @@ class ClassicSession:
     for i in range(10):
       handle = win32gui.GetForegroundWindow()
       title = SingleHwnd(handle).get_title()
-      if title == "SAS":
+
+      # KS: I made this change so that submit will also work if a window in SAS is maximized
+      # if title == "SAS":
+      if title == "SAS" or title.startswith('SAS -'):
         driver = comclt.Dispatch("WScript.Shell")
         time.sleep(0.01)
         driver.SendKeys("{F4}")
